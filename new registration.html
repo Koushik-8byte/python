@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- CryptoJS Library -->
+    <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.min.js"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .form-container {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2 class="text-center mb-4">Register</h2>
+
+        <!-- Flask-style message placeholders -->
+        {% if message %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% elif error %}
+            <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST" action="/" id="registerForm">
+            <div class="mb-3">
+                <label for="username" class="form-label">Username:</label>
+                <input type="text" class="form-control" id="username" name="username" value="{{ request.form.username }}" placeholder="Enter your username" required autofocus>
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">Email:</label>
+                <input type="email" class="form-control" id="email" name="email" value="{{ request.form.email }}" placeholder="Enter your email" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Password:</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="confirm_password" class="form-label">Confirm Password:</label>
+                <input type="password" class="form-control" id="confirm_password" placeholder="Re-enter your password" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Register</button>
+        </form>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- JavaScript Encryption Logic -->
+    <script>
+        document.getElementById("registerForm").addEventListener("submit", function(event) {
+            const passwordField = document.getElementById("password");
+            const confirmPasswordField = document.getElementById("confirm_password");
+
+            const password = passwordField.value;
+            const confirmPassword = confirmPasswordField.value;
+
+            if (password !== confirmPassword) {
+                alert("Passwords do not match.");
+                event.preventDefault();
+                return;
+            }
+
+            // 🔐 Encrypt password using AES
+            const secretKey = "your-secret-key"; // Replace with secure key management in production
+            const encryptedPassword = CryptoJS.AES.encrypt(password, secretKey).toString();
+
+            // Replace both password fields with encrypted value
+            passwordField.value = encryptedPassword;
+            confirmPasswordField.value = encryptedPassword;
+        });
+    </script>
+</body>
+</html>
